@@ -1,0 +1,147 @@
+
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title>Islamabad College For Boys - Attendance Portal</title>
+  <style>
+    body {
+      margin: 0;
+      font-family: 'Segoe UI', sans-serif;
+      background: linear-gradient(135deg, #dbeafe, #f0fdf4);
+      color: #111827;
+    }
+    header {
+      background: #1d4ed8;
+      color: white;
+      padding: 20px;
+      text-align: center;
+      font-size: 24px;
+      font-weight: bold;
+      box-shadow: 0 2px 5px rgba(0,0,0,0.2);
+    }
+    .container {
+      padding: 30px;
+      max-width: 800px;
+      margin: auto;
+    }
+    .section {
+      background: white;
+      padding: 25px;
+      margin-bottom: 30px;
+      border-radius: 12px;
+      box-shadow: 0 4px 12px rgba(0,0,0,0.1);
+    }
+    input, button {
+      padding: 12px;
+      width: 100%;
+      margin-top: 12px;
+      margin-bottom: 10px;
+      font-size: 16px;
+      border: 1px solid #ccc;
+      border-radius: 8px;
+    }
+    button {
+      background-color: #2563eb;
+      color: white;
+      cursor: pointer;
+    }
+    button:hover {
+      background-color: #1e40af;
+    }
+    table {
+      width: 100%;
+      border-collapse: collapse;
+      margin-top: 16px;
+    }
+    th, td {
+      border: 1px solid #ddd;
+      padding: 10px;
+      text-align: center;
+    }
+    th {
+      background-color: #f1f5f9;
+    }
+  </style>
+</head>
+<body>
+  <header>Islamabad College For Boys G-6/3 Islamabad - Attendance System</header>
+  <div class="container">
+    <div class="section" id="admin-section">
+      <h2>Admin Panel</h2>
+      <input type="password" id="admin-pass" placeholder="Enter Admin Password" />
+      <div id="admin-tools" style="display:none;">
+        <input type="text" id="new-name" placeholder="Student Name" />
+        <input type="text" id="new-roll" placeholder="Roll No" />
+        <button onclick="addStudent()">Add Student</button>
+        <button onclick="markAttendance()">Mark Attendance</button>
+      </div>
+    </div>
+
+    <div class="section">
+      <h2>Parent Attendance Viewer</h2>
+      <input type="text" id="search-roll" placeholder="Enter Roll No" />
+      <button onclick="viewAttendance()">View Attendance</button>
+      <div id="attendance-output"></div>
+    </div>
+  </div>
+
+  <script>
+    const adminPassword = "admin123";
+    let students = {
+      "101": { name: "Ahmed", attendance: ["P", "A", "P", "P", "L", "P", "A", "P", "P", "P"] },
+      "102": { name: "Sara", attendance: ["P", "P", "A", "A", "P", "P", "L", "P", "P", "P"] }
+    };
+
+    document.getElementById('admin-pass').addEventListener('input', function() {
+      if (this.value === adminPassword) {
+        document.getElementById('admin-tools').style.display = 'block';
+      } else {
+        document.getElementById('admin-tools').style.display = 'none';
+      }
+    });
+
+    function addStudent() {
+      const name = document.getElementById('new-name').value;
+      const roll = document.getElementById('new-roll').value;
+      if (name && roll && !students[roll]) {
+        students[roll] = { name: name, attendance: [] };
+        alert("Student added successfully.");
+      } else {
+        alert("Invalid or duplicate roll number.");
+      }
+    }
+
+    function markAttendance() {
+      for (let roll in students) {
+        const status = prompt(`Enter attendance for ${students[roll].name} (${roll}) [P/A/L]:`);
+        if (["P", "A", "L"].includes(status.toUpperCase())) {
+          students[roll].attendance.unshift(status.toUpperCase());
+          if (students[roll].attendance.length > 10) students[roll].attendance.pop();
+        }
+      }
+      alert("Attendance marked.");
+    }
+
+    function viewAttendance() {
+      const roll = document.getElementById('search-roll').value;
+      const student = students[roll];
+      if (student) {
+        let output = `<h3>${student.name} (${roll})</h3><table><tr>`;
+        student.attendance.forEach((day, i) => {
+          output += `<th>Day ${i + 1}</th>`;
+        });
+        output += "</tr><tr>";
+        student.attendance.forEach(day => {
+          output += `<td>${day}</td>`;
+        });
+        output += "</tr></table>";
+        document.getElementById('attendance-output').innerHTML = output;
+      } else {
+        document.getElementById('attendance-output').innerHTML = "Roll number not found.";
+      }
+    }
+  </script>
+</body>
+</html>
